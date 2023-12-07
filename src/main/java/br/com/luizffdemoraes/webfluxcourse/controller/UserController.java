@@ -1,7 +1,10 @@
 package br.com.luizffdemoraes.webfluxcourse.controller;
 
+import br.com.luizffdemoraes.webfluxcourse.model.request.UserRequest;
+import br.com.luizffdemoraes.webfluxcourse.model.response.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserController {
@@ -20,7 +23,4 @@ public interface UserController {
 
     @DeleteMapping(value = "/{id}")
     ResponseEntity<Mono<Void>> delete(@PathVariable String id);
-
-
-
 }
