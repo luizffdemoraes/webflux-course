@@ -39,4 +39,10 @@ public class UserService {
                 .switchIfEmpty(Mono.error(new ObjectNotFoundException(
                         format("Object not found. Type: %s", User.class.getSimpleName()))));
     }
+
+    public Mono<User> updateUser(final String id, final UserRequest request) {
+       return findById(id)
+               .map(entity -> mapper.toEntity(request, entity))
+               .flatMap(repository::save);
+    }
 }
