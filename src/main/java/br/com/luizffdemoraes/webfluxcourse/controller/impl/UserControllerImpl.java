@@ -1,6 +1,7 @@
 package br.com.luizffdemoraes.webfluxcourse.controller.impl;
 
 import br.com.luizffdemoraes.webfluxcourse.controller.UserController;
+import br.com.luizffdemoraes.webfluxcourse.mapper.UserMapper;
 import br.com.luizffdemoraes.webfluxcourse.model.request.UserRequest;
 import br.com.luizffdemoraes.webfluxcourse.model.response.UserResponse;
 import br.com.luizffdemoraes.webfluxcourse.service.UserService;
@@ -16,9 +17,11 @@ import reactor.core.publisher.Mono;
 public class UserControllerImpl implements UserController {
 
     private final UserService service;
+    private final UserMapper mapper;
 
-    public UserControllerImpl(UserService service) {
+    public UserControllerImpl(UserService service, UserMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @Override
@@ -29,7 +32,9 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<Mono<UserResponse>> find(String id) {
-        return null;
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(service.findById(id).map(mapper::toResponse));
     }
 
     @Override
