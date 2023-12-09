@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -61,7 +59,7 @@ public class ControllerExceptionHandler {
                                 now(),
                                 NOT_FOUND.value(),
                                 NOT_FOUND.getReasonPhrase(),
-                                verifyDupKey(ex.getMessage()),
+                                ex.getMessage(),
                                 request.getPath().toString()
                         )));
     }
