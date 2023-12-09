@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-
 public class UserRepository {
 
     private final ReactiveMongoTemplate mongoTemplate;
