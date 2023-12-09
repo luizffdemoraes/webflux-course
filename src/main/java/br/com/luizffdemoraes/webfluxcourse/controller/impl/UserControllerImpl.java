@@ -1,6 +1,8 @@
 package br.com.luizffdemoraes.webfluxcourse.controller.impl;
 
 import br.com.luizffdemoraes.webfluxcourse.controller.UserController;
+import br.com.luizffdemoraes.webfluxcourse.controller.exceptions.ObjectNotFoundException;
+import br.com.luizffdemoraes.webfluxcourse.entity.User;
 import br.com.luizffdemoraes.webfluxcourse.mapper.UserMapper;
 import br.com.luizffdemoraes.webfluxcourse.model.request.UserRequest;
 import br.com.luizffdemoraes.webfluxcourse.model.response.UserResponse;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static java.lang.String.format;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -32,7 +36,6 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<Mono<UserResponse>> find(String id) {
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.findById(id).map(mapper::toResponse));
     }

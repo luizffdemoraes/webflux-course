@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -48,6 +49,21 @@ public class ControllerExceptionHandler {
         }
 
         return ResponseEntity.status(BAD_REQUEST).body(Mono.just(error));
+    }
+
+    @ExceptionHandler(ObjectNotFoundException.class)
+    ResponseEntity<Mono<StandardError>> objectNotFoundException(
+            ObjectNotFoundException ex, ServerHttpRequest request
+    ) {
+        return ResponseEntity.status(NOT_FOUND)
+                .body(Mono.just(
+                        new StandardError(
+                                now(),
+                                NOT_FOUND.value(),
+                                NOT_FOUND.getReasonPhrase(),
+                                verifyDupKey(ex.getMessage()),
+                                request.getPath().toString()
+                        )));
     }
 
     private String verifyDupKey(String message) {
