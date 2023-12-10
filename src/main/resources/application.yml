@@ -5,3 +5,7 @@ spring:
      auto-index-creation: true
   application:
     name: webflux-course
+
+springdoc:
+  api-docs:
+    enabled: true
