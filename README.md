@@ -8,7 +8,7 @@ Diagrama UML de Usuário definido para o cadastro na base de dados MongoDB
 
 
 <p align="center">
-  <img alt="UML de Usuário" src="imagens/USERS.png">
+  <img alt="UML de Usuário" src="imagens/users.png">
 </p>
 
 <h2 align="center">
