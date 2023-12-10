@@ -19,6 +19,7 @@ import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.*;
 import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.getBuildUserRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -84,7 +85,25 @@ class UserControllerImplTest {
     }
 
     @Test
-    void find() {
+    @DisplayName("Test find by id endpoint with success")
+    void testFindByIdWithSuccess() {
+
+        when(service.findById(anyString())).thenReturn(getBuildMonoUser());
+        when(mapper.toResponse(any(User.class))).thenReturn(getBuildUserResponse());
+
+        webTestClient.get().uri(BASE_URI + "/" + getIDTest())
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(getIDTest())
+                .jsonPath("$.name").isEqualTo(getNAMETest())
+                .jsonPath("$.email").isEqualTo(getEMAILTest())
+                .jsonPath("$.password").isEqualTo(getPASSWORDTest());
+
+        verify(service).findById(anyString());
+        verify(mapper).toResponse(any(User.class));
+
     }
 
     @Test

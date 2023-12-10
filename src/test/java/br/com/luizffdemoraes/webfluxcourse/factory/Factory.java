@@ -2,6 +2,7 @@ package br.com.luizffdemoraes.webfluxcourse.factory;
 
 import br.com.luizffdemoraes.webfluxcourse.entity.User;
 import br.com.luizffdemoraes.webfluxcourse.model.request.UserRequest;
+import br.com.luizffdemoraes.webfluxcourse.model.response.UserResponse;
 import reactor.core.publisher.Mono;
 
 
@@ -37,6 +38,15 @@ public class Factory {
     public static UserRequest getBuildUserRequestInvalid() {
         return UserRequest.builder()
                 .name(NAME.concat(" "))
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+    }
+
+    public static UserResponse getBuildUserResponse() {
+        return UserResponse.builder()
+                .id(ID)
+                .name(NAME)
                 .email(EMAIL)
                 .password(PASSWORD)
                 .build();
