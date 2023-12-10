@@ -3,6 +3,7 @@ package br.com.luizffdemoraes.webfluxcourse.controller.impl;
 import br.com.luizffdemoraes.webfluxcourse.entity.User;
 import br.com.luizffdemoraes.webfluxcourse.mapper.UserMapper;
 import br.com.luizffdemoraes.webfluxcourse.model.request.UserRequest;
+import br.com.luizffdemoraes.webfluxcourse.model.response.UserResponse;
 import br.com.luizffdemoraes.webfluxcourse.service.UserService;
 import com.mongodb.reactivestreams.client.MongoClient;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.*;
 import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.getBuildUserRequest;
@@ -107,7 +111,24 @@ class UserControllerImplTest {
     }
 
     @Test
-    void findAll() {
+    @DisplayName("Test find all endpoint with success")
+    void testFindAllWithSuccess() {
+
+        when(service.findAll()).thenReturn(Flux.just(getBuildUser()));
+        when(mapper.toResponse(any(User.class))).thenReturn(getBuildUserResponse());
+
+        webTestClient.get().uri(BASE_URI)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[0].id").isEqualTo(getIDTest())
+                .jsonPath("$[0].name").isEqualTo(getNAMETest())
+                .jsonPath("$[0].email").isEqualTo(getEMAILTest())
+                .jsonPath("$[0].password").isEqualTo(getPASSWORDTest());
+
+        verify(service).findAll();
+        verify(mapper).toResponse(any(User.class));
     }
 
     @Test
