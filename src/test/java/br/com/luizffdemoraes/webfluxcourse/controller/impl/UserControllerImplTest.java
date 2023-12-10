@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 import static reactor.core.publisher.Mono.just;
@@ -58,6 +59,28 @@ class UserControllerImplTest {
                 .expectStatus().isCreated();
 
         verify(service).save(any(UserRequest.class));
+    }
+
+    @Test
+    @DisplayName("Test endpoint save with bad request")
+    void testSaveWithBadRequest() {
+        String error = "Validation error";
+        String message = "Error on validation attributes";
+        String fieldName = "name";
+        String errorMessage = "field cannot have blank spaces at the beginning or at end";
+
+        webTestClient.post().uri(BASE_URI)
+                .contentType(APPLICATION_JSON)
+                .body(fromValue(getBuildUserRequestInvalid()))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.path").isEqualTo(BASE_URI)
+                .jsonPath("$.status").isEqualTo(BAD_REQUEST.value())
+                .jsonPath("$.error").isEqualTo(error)
+                .jsonPath("$.message").isEqualTo(message)
+                .jsonPath("$.errors[0].fieldName").isEqualTo(fieldName)
+                .jsonPath("$.errors[0].message").isEqualTo(errorMessage);
     }
 
     @Test

@@ -34,6 +34,14 @@ public class Factory {
                 .build();
     }
 
+    public static UserRequest getBuildUserRequestInvalid() {
+        return UserRequest.builder()
+                .name(NAME.concat(" "))
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+    }
+
     public static String getIDTest(){
         return ID;
     }
