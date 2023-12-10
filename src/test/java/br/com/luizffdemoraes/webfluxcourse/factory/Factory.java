@@ -9,8 +9,8 @@ import reactor.core.publisher.Mono;
 public class Factory {
 
     private static final String ID = "123456";
-    private static final String NAME = "Valdir";
-    private static final String EMAIL = "valdir@mail.com";
+    private static final String NAME = "Luiz";
+    private static final String EMAIL = "luiz@mail.com";
     private static final String PASSWORD = "123";
 
     public static User getBuildUser() {

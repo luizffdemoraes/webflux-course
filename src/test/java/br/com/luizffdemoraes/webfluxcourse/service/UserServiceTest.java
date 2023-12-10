@@ -50,14 +50,13 @@ class UserServiceTest {
 
     @Test
     void testFindById() {
-        String id = "123";
         Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(getBuildMonoUser());
 
-        Mono<User> result = service.findById(id);
+        Mono<User> result = service.findById(getIDTest());
 
         StepVerifier.create(result)
                 .expectNextMatches(user -> user.getClass() == User.class
-                        && Objects.equals(user.getId(), id))
+                        && Objects.equals(user.getId(), getIDTest()))
                 .expectComplete()
                 .verify();
 
@@ -84,7 +83,7 @@ class UserServiceTest {
         Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(getBuildMonoUser());
         Mockito.when(repository.save(ArgumentMatchers.any(User.class))).thenReturn(getBuildMonoUser());
 
-        Mono<User> result = service.updateUser("123", getBuildUserRequest());
+        Mono<User> result = service.updateUser(getIDTest(), getBuildUserRequest());
 
         StepVerifier.create(result)
                 .expectNextMatches(user -> user.getClass() == User.class)
@@ -98,7 +97,7 @@ class UserServiceTest {
     void testDelete() {
         Mockito.when(repository.findAndRemove(ArgumentMatchers.anyString())).thenReturn(getBuildMonoUser());
 
-        Mono<User> result = service.deleteUser("123");
+        Mono<User> result = service.deleteUser(getIDTest());
 
         StepVerifier.create(result)
                 .expectNextMatches(user -> user.getClass() == User.class)

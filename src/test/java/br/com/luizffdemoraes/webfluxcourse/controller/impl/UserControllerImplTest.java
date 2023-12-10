@@ -103,7 +103,6 @@ class UserControllerImplTest {
 
         verify(service).findById(anyString());
         verify(mapper).toResponse(any(User.class));
-
     }
 
     @Test
@@ -148,7 +147,6 @@ class UserControllerImplTest {
 
         verify(service).updateUser(anyString(), any(UserRequest.class));
         verify(mapper).toResponse(any(User.class));
-
     }
 
     @Test
