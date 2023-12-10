@@ -2,9 +2,12 @@ package br.com.luizffdemoraes.webfluxcourse.repository;
 
 import br.com.luizffdemoraes.webfluxcourse.entity.User;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
 
 @Repository
 public class UserRepository {
@@ -25,5 +28,11 @@ public class UserRepository {
 
     public Flux<User> findAll() {
         return mongoTemplate.findAll(User.class);
+    }
+
+    public Mono<User> findAndRemove(String id) {
+        Query query = new Query();
+        Criteria where = Criteria.where("id").is(id);
+        return mongoTemplate.findAndRemove(query.addCriteria(where), User.class);
     }
 }
