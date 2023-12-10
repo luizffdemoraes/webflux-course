@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -48,6 +49,7 @@ class UserServiceTest {
         Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(Mono.just(User.builder().id("1234").build()));
 
         Mono<User> result = service.findById("123");
+
         StepVerifier.create(result)
                 .expectNextMatches(user -> user.getClass() == User.class
                         && Objects.equals(user.getId(), "1234"))
@@ -55,5 +57,19 @@ class UserServiceTest {
                 .verify();
 
         Mockito.verify(repository, Mockito.times(1)).findById(ArgumentMatchers.anyString());
+    }
+
+    @Test
+    void testFindAll() {
+        Mockito.when(repository.findAll()).thenReturn(Flux.just(User.builder().build()));
+
+        Flux<User> result = service.findAll();
+
+        StepVerifier.create(result)
+                .expectNextMatches(user -> user.getClass() == User.class)
+                .expectComplete()
+                .verify();
+
+        Mockito.verify(repository, Mockito.times(1)).findAll();
     }
 }
