@@ -3,7 +3,6 @@ package br.com.luizffdemoraes.webfluxcourse.controller.impl;
 import br.com.luizffdemoraes.webfluxcourse.entity.User;
 import br.com.luizffdemoraes.webfluxcourse.mapper.UserMapper;
 import br.com.luizffdemoraes.webfluxcourse.model.request.UserRequest;
-import br.com.luizffdemoraes.webfluxcourse.model.response.UserResponse;
 import br.com.luizffdemoraes.webfluxcourse.service.UserService;
 import com.mongodb.reactivestreams.client.MongoClient;
 import org.junit.jupiter.api.DisplayName;
@@ -17,11 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 
-import java.util.List;
-
 import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.*;
-import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.getBuildUserRequest;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -132,7 +127,27 @@ class UserControllerImplTest {
     }
 
     @Test
-    void update() {
+    @DisplayName("Test update endpoint with success")
+    void testUpdateWithSuccess() {
+
+        when(service.updateUser(anyString(), any(UserRequest.class)))
+                .thenReturn(getBuildMonoUser());
+        when(mapper.toResponse(any(User.class))).thenReturn(getBuildUserResponse());
+
+        webTestClient.patch().uri(BASE_URI + "/" + getIDTest())
+                .contentType(APPLICATION_JSON)
+                .body(fromValue(getBuildUserRequest()))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(getIDTest())
+                .jsonPath("$.name").isEqualTo(getNAMETest())
+                .jsonPath("$.email").isEqualTo(getEMAILTest())
+                .jsonPath("$.password").isEqualTo(getPASSWORDTest());
+
+        verify(service).updateUser(anyString(), any(UserRequest.class));
+        verify(mapper).toResponse(any(User.class));
+
     }
 
     @Test
