@@ -29,20 +29,31 @@ class UserServiceTest {
     private UserService service;
 
     @Test
-    void save() {
-        UserRequest request = new UserRequest("Luiz", "luiz@gmail.com", "123");
-        User entity = new User();
+    void testSave() {
+        Mockito.when(mapper.toEntity(ArgumentMatchers.any(UserRequest.class))).thenReturn(User.builder().build());
+        Mockito.when(repository.save(ArgumentMatchers.any(User.class))).thenReturn(Mono.just(User.builder().build()));
 
-        Mockito.when(mapper.toEntity(ArgumentMatchers.any(UserRequest.class))).thenReturn(entity);
-        Mockito.when(repository.save(ArgumentMatchers.any(User.class))).thenReturn(Mono.just(new User()));
-
-        Mono<User> result = service.save(request);
+        Mono<User> result = service.save(UserRequest.builder().name("Luiz").email("luiz@gmail.com").password("123").build());
 
         StepVerifier.create(result)
-                .expectNextMatches(Objects::nonNull)
+                .expectNextMatches(user -> user.getClass() == User.class)
                 .expectComplete()
                 .verify();
 
         Mockito.verify(repository, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    void testFindById() {
+        Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(Mono.just(User.builder().id("1234").build()));
+
+        Mono<User> result = service.findById("123");
+        StepVerifier.create(result)
+                .expectNextMatches(user -> user.getClass() == User.class
+                        && Objects.equals(user.getId(), "1234"))
+                .expectComplete()
+                .verify();
+
+        Mockito.verify(repository, Mockito.times(1)).findById(ArgumentMatchers.anyString());
     }
 }

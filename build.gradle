@@ -61,3 +61,8 @@ jacoco {
 	toolVersion = "0.8.9"
 	reportsDirectory = layout.buildDirectory.dir("customJacocoReportDir")
 }
+
+// Lombok and MapStruct configuration
+compileJava {
+	options.annotationProcessorGeneratedSourcesDirectory = file("$buildDir/generated/sources/annotationProcessor/java/main")
+}
