@@ -1,9 +1,11 @@
 package br.com.luizffdemoraes.webfluxcourse.service;
 
+import br.com.luizffdemoraes.webfluxcourse.controller.exceptions.ObjectNotFoundException;
 import br.com.luizffdemoraes.webfluxcourse.entity.User;
 import br.com.luizffdemoraes.webfluxcourse.mapper.UserMapper;
 import br.com.luizffdemoraes.webfluxcourse.model.request.UserRequest;
 import br.com.luizffdemoraes.webfluxcourse.repository.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -16,6 +18,8 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Objects;
+
+import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -31,10 +35,10 @@ class UserServiceTest {
 
     @Test
     void testSave() {
-        Mockito.when(mapper.toEntity(ArgumentMatchers.any(UserRequest.class))).thenReturn(User.builder().build());
-        Mockito.when(repository.save(ArgumentMatchers.any(User.class))).thenReturn(Mono.just(User.builder().build()));
+        Mockito.when(mapper.toEntity(ArgumentMatchers.any(UserRequest.class))).thenReturn(getBuildUser());
+        Mockito.when(repository.save(ArgumentMatchers.any(User.class))).thenReturn(getBuildMonoUser());
 
-        Mono<User> result = service.save(UserRequest.builder().name("Luiz").email("luiz@gmail.com").password("123").build());
+        Mono<User> result = service.save(getBuildUserRequest());
 
         StepVerifier.create(result)
                 .expectNextMatches(user -> user.getClass() == User.class)
@@ -46,13 +50,14 @@ class UserServiceTest {
 
     @Test
     void testFindById() {
-        Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(Mono.just(User.builder().id("1234").build()));
+        String id = "123";
+        Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(getBuildMonoUser());
 
-        Mono<User> result = service.findById("123");
+        Mono<User> result = service.findById(id);
 
         StepVerifier.create(result)
                 .expectNextMatches(user -> user.getClass() == User.class
-                        && Objects.equals(user.getId(), "1234"))
+                        && Objects.equals(user.getId(), id))
                 .expectComplete()
                 .verify();
 
@@ -61,7 +66,7 @@ class UserServiceTest {
 
     @Test
     void testFindAll() {
-        Mockito.when(repository.findAll()).thenReturn(Flux.just(User.builder().build()));
+        Mockito.when(repository.findAll()).thenReturn(Flux.just(getBuildUser()));
 
         Flux<User> result = service.findAll();
 
@@ -75,11 +80,11 @@ class UserServiceTest {
 
     @Test
     void testUpdate() {
-        Mockito.when(mapper.toEntity(ArgumentMatchers.any(UserRequest.class), ArgumentMatchers.any(User.class))).thenReturn(User.builder().build());
-        Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(Mono.just(User.builder().build()));
-        Mockito.when(repository.save(ArgumentMatchers.any(User.class))).thenReturn(Mono.just(User.builder().build()));
+        Mockito.when(mapper.toEntity(ArgumentMatchers.any(UserRequest.class), ArgumentMatchers.any(User.class))).thenReturn(getBuildUser());
+        Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(getBuildMonoUser());
+        Mockito.when(repository.save(ArgumentMatchers.any(User.class))).thenReturn(getBuildMonoUser());
 
-        Mono<User> result = service.updateUser("123", UserRequest.builder().name("Luiz").email("luiz@gmail.com").password("123").build());
+        Mono<User> result = service.updateUser("123", getBuildUserRequest());
 
         StepVerifier.create(result)
                 .expectNextMatches(user -> user.getClass() == User.class)
@@ -87,5 +92,29 @@ class UserServiceTest {
                 .verify();
 
         Mockito.verify(repository, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    void testDelete() {
+        Mockito.when(repository.findAndRemove(ArgumentMatchers.anyString())).thenReturn(getBuildMonoUser());
+
+        Mono<User> result = service.deleteUser("123");
+
+        StepVerifier.create(result)
+                .expectNextMatches(user -> user.getClass() == User.class)
+                .expectComplete()
+                .verify();
+
+        Mockito.verify(repository, Mockito.times(1)).findAndRemove(ArgumentMatchers.anyString());
+    }
+
+    @Test
+    void testHandleNotFound() {
+        String message = "Object not found. Id: 123, Type: User";
+        Mockito.when(repository.findById(ArgumentMatchers.anyString())).thenReturn(Mono.empty());
+
+        ObjectNotFoundException exception = Assertions.assertThrows(ObjectNotFoundException.class, () -> service.findById("123").block());
+
+        Assertions.assertTrue(exception.getMessage().contains(message));
     }
 }

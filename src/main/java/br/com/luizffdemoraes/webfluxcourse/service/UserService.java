@@ -32,7 +32,6 @@ public class UserService {
         return handleNotFound(repository.findById(id), id);
     }
 
-
     public Flux<User> findAll() {
         return repository.findAll();
     }
