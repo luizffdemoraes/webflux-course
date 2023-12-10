@@ -3,6 +3,14 @@ WebfluxCourse
 </h1>
 
 <h3 align="center">
+Diagrama de arquitetura do projeto.
+</h3>
+
+<p align="center">
+  <img alt="Diagrama de arquitetura do projeto" src="imagens/diagrama.png">
+</p>
+
+<h3 align="center">
 Diagrama UML de Usuário definido para o cadastro na base de dados MongoDB
 </h3>
 
