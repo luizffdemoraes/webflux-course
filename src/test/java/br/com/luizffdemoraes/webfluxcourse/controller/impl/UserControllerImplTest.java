@@ -17,6 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 
 import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.*;
+import static br.com.luizffdemoraes.webfluxcourse.factory.Factory.getIDTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -151,6 +152,14 @@ class UserControllerImplTest {
     }
 
     @Test
-    void delete() {
+    @DisplayName("Test delete endpoint with success")
+    void testDeleteWithSuccess() {
+        when(service.deleteUser(anyString())).thenReturn(getBuildMonoUser());
+
+        webTestClient.delete().uri(BASE_URI + "/" + getIDTest())
+                .exchange()
+                .expectStatus().isNoContent();
+
+        verify(service).deleteUser(anyString());
     }
 }
