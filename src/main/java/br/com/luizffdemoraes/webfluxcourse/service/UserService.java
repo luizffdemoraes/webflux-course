@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import static java.lang.String.format;
 
 @Service
-
 public class UserService {
 
     private final UserRepository repository;

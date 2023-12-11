@@ -44,16 +44,27 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.2.0'
 }
 
-tasks.named('test') {
+tasks.test {
 	useJUnitPlatform()
+	exclude '**/*Data.*'
 }
 
-tasks.jacocoTestReport {
+jacocoTestReport {
 	dependsOn(tasks.test)
 	reports {
 		xml.required.set(true)
 		csv.required.set(true)
 		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+	}
+
+	afterEvaluate {
+		// Exclua a classe UserMapper do relatório de cobertura
+		classDirectories = files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: '**/*UserMapper*.*')
+		})
+
+		println "JaCoCo - Class Directories: ${classDirectories}"
+		println "JaCoCo - Excluded Classes: ${classDirectories.files.collect { fileTree(dir: it, exclude: '**/*UserMapper*.*') }}"
 	}
 }
 

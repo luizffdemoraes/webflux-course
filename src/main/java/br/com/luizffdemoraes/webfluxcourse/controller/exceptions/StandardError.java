@@ -1,12 +1,14 @@
 package br.com.luizffdemoraes.webfluxcourse.controller.exceptions;
 
-import lombok.*;
+
+
+import lombok.Getter;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 public class StandardError implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
